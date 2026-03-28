@@ -11,15 +11,17 @@ export function useGemini(apiKey) {
     if (!apiKey) return;
     try {
       genAIRef.current = new GoogleGenerativeAI(apiKey);
-      const model = genAIRef.current.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const model = genAIRef.current.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        systemInstruction:
+          'You are Nova, a friendly and helpful voice assistant. Keep your responses concise and conversational since they will be spoken aloud. Use natural, warm language. Avoid markdown formatting, bullet points, or numbered lists. Respond in 2-3 sentences maximum unless the user asks for a detailed explanation.',
+      });
       chatRef.current = model.startChat({
         history: [],
         generationConfig: {
           maxOutputTokens: 250,
           temperature: 0.8,
         },
-        systemInstruction:
-          'You are Nova, a friendly and helpful voice assistant. Keep your responses concise and conversational since they will be spoken aloud. Use natural, warm language. Avoid markdown formatting, bullet points, or numbered lists. Respond in 2-3 sentences maximum unless the user asks for a detailed explanation.',
       });
     } catch (e) {
       setError('Failed to initialize Gemini. Please check your API key.');

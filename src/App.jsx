@@ -9,8 +9,13 @@ import { useGemini } from './hooks/useGemini';
 import './App.css';
 
 function App() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
-  const [showKeyModal, setShowKeyModal] = useState(!apiKey);
+  const [apiKey, setApiKey] = useState(() => {
+    // Priority: env var > localStorage
+    const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (envKey && envKey !== 'your_gemini_api_key_here') return envKey;
+    return localStorage.getItem('gemini_api_key') || '';
+  });
+  const [showKeyModal, setShowKeyModal] = useState(!apiKey || apiKey === 'your_gemini_api_key_here');
   const [messages, setMessages] = useState([]);
   const [botState, setBotState] = useState('idle'); // idle | listening | thinking | speaking
   const [audioLevel, setAudioLevel] = useState(0);
